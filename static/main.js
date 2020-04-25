@@ -5,7 +5,7 @@ $("document").ready(function() {
 		$.get('https://en.wikipedia.org/wiki/2019%E2%80%9320_coronavirus_pandemic', function( html ) {
 		
 		
-	   s = "<table><tr><td>Total Confirmed Cases</td><td>Total Recovered Cases</td><td>Total Recovered Cases</td><td>Updated date</td></tr><tr>";
+	   s = "<table><tr><td>Total Confirmed Cases</td><td>Total Deaths</td><td>Total Recovered Cases</td><td>Updated date</td></tr><tr>";
 	   for(var i=0;i<3;i++)
 	   {
 		 $(html).find("#thetable").find("tbody").find("tr:eq(1)").find("th:eq("+(i+1)+")").each( function(){
@@ -22,6 +22,8 @@ $("document").ready(function() {
 	   s=s+"<td>"+`${Date()}`.substr(4,11)+"</td></tr></table>";
 		 $("#content").append(s);
 		 console.log( JSON.stringify(s1) );
+	var body = $(html).find("#covid19-container").find("table").find("tbody").html();
+            $("#full").append(body);
 	} )
 
 	function senddata(data)
