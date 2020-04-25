@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import render_template
 from flask import request
+from flask import Response
 import requests
 import json
 import xmltodict
@@ -16,30 +17,30 @@ app = Flask(__name__, template_folder='template', static_folder='static')
 def hello_world():
 	return render_template('index.html')
 
-def sqlconnect():
-	conn = None
-	cursor = None
-	try:
-		conn = mysql.connector.connect(host='localhost',database='healthcamp',user='manasi',password='yL06hbxRY4NjkcYx')
-		cursor = conn.cursor()
-		return conn
-	except:
-		print("Connection Failed!")
-
-
 # recipr search API returns the recipe for keyword
 @app.route('/storeData/', methods = ['POST'])
 def storeData():
-	print("received")
-	#print(requests.request)
+
 	data = request.json
-	print(data)
-	conn = sqlconnect()
-	yelp = pd.read_sql('INSERT INTO webcrapper (confirmed, death, recovered) VALUES (' + data['0']+ ',' + data['1']+','+ data['2']+')' , con=conn)
-
-	resp = Response(js, status=200, mimetype='application/json')
-
-	return resp
+	str1 = data['0'].replace(',', '')
+	str1 = str1[1:]
+	str2 = data['1'].replace(',', '')
+	str2 = str2[1:]
+	str3= data['2'].replace(',', '')
+	str3= str3[1:]
+	
+	conn = None
+	cursor = None
+	try:
+		conn = mysql.connector.connect(host='localhost',database='healthcamp',user='manasi',password='yL06hbxRY4NjkcYx',port='3306')
+		cursor = conn.cursor()
+		sql = "INSERT INTO healthcamp.webcrapper (confirmed, death, recovered) VALUES (%s, %s,%s)"
+		val = (str1, str2,str3)
+		cursor.execute(sql, val)
+		conn.commit()
+	except:
+		print("Connection Failed!")
+	return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
 
 # App run, debug mode true to avoid rerunning after changes
 app.run(debug=True)
